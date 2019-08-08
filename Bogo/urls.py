@@ -22,5 +22,9 @@ urlpatterns = [
     path('',parsed_data.views.home, name='home'),
     path('login/',parsed_data.views.login, name='login'),
     path('add/',parsed_data.views.addGoods, name = 'addGoods'),
+    path('post/',parsed_data.views.post, name = 'post'),
+    path('post/<int:post_id>',parsed_data.views.detail, name = 'post_detail'),
+    path('post/new',parsed_data.views.new, name = 'post_new'),
+    path('post/create',parsed_data.views.create, name='post_create'),
     path('accounts/',include('allauth.urls')),
 ]
