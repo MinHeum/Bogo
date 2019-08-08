@@ -1,0 +1,15 @@
+<h1><a href="new">글쓰기</a></h1>
+{% block content %}
+{% for post in posts.all %}
+<div class="post_post">
+    <div id="user_name"><h1>유저 아이디 : {{post.user_name}}</h1></div>
+    <div id="post_title"><h1> {{post.title}} </h1></div>
+    <div id="post_date"><p> {{post.pub_date}} </p></div> 
+    <div id="post_summary">{{post.summary}}<a href="{% url 'post_detail' post.id %}">...more</a> </p>
+    <br><br></div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+</body>

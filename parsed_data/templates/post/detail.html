@@ -1,0 +1,15 @@
+{% block content %}
+<div id=post>
+    <div id="user_name"><br><br>
+        <h1>아이디 : {{post.user_name}}</h1>
+    <div id="title"><br><br>
+        <h1> 제목 : {{post.title}} </h1>
+    </div>
+    <div id="date">
+        <p> 작성 날짜 : {{post.pub_date}} </p>
+    </div>
+    <div id="summary">
+        <p><br><br>{{post.body}} </p>
+    </div>
+</div>
+{% endblock %}
