@@ -1,0 +1,1 @@
+web: gunicorn Bogo.wsgi --log-file -

@@ -12,4 +12,3 @@ def login(request):
 @login_required
 def addGoods(request):
     return render(request,'bogo/add.html')
-
