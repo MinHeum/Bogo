@@ -9,6 +9,8 @@ def home(request):
 def login(request):
     return render(request, 'bogo/login.html')
 
+def ok(request):
+    return render(request,'bogo/google5270911e18decf1c.html')
 @login_required
 def addGoods(request):
     return render(request,'bogo/add.html')

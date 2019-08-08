@@ -22,5 +22,6 @@ urlpatterns = [
     path('',parsed_data.views.home, name='home'),
     path('login/',parsed_data.views.login, name='login'),
     path('add/',parsed_data.views.addGoods, name = 'addGoods'),
+    path('google5270911e18decf1c.html',parsed_data.views.ok,name ='ok'),
     path('accounts/',include('allauth.urls')),
 ]
