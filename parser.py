@@ -11,13 +11,17 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Bogo.settings')
 import django
 django.setup()
 from parsed_data.models import Product
+import platform
 
 # Chrome 창을 띄우지 않고(headless 하게) driver 를 사용하기 위한 options 변수 선언 및 설정 그리고 driver 선언
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("--disable-gpu")
-driver = webdriver.Chrome('/Users/quatre/PycharmProjects/Bogo_hackathon/chromedriver', options=options)
+if "Darwin" in platform.system():
+    driver = webdriver.Chrome('./chromedriver', options=options)
+else:
+    driver = webdriver.Chrome('./chromedriver.exe',options=options)
 driver.implicitly_wait(3)
 
 # CU Parser
@@ -136,12 +140,13 @@ def emart_parser():
 
 def gs25_parser():
     # GS25 페이지에 driver를 접속시킨다.
+    driver.get('http://gs25.gsretail.com/gscvs/ko/products/event-goods')
     num = 1
     col = 0
     switch = 0
+    page = 1
     prod_list = []
-    while col<3:
-        driver.get('http://gs25.gsretail.com/gscvs/ko/products/event-goods')
+    while 1:
         try:
             prod_input = []
             print((num + (col * 8), "번째 상품 파싱 [gs25]"))
@@ -171,31 +176,96 @@ def gs25_parser():
                 print("next")
                 col += 1
                 num = 1
-                driver.execute_script('goodsPageController.moveControl(1);')
-        except NoSuchElementException:
-            if switch is 0:
-                print("2+1으로 이동")
-                driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[2]/span').click()
-                switch += 1
-            elif switch is 1:
-                print("덤증정으로 이동")
-                driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[3]/span').click()
-                switch += 1
-            elif switch is 2:
-                break
+                page += 1
+                driver.execute_script('goodsPageController.movePage(%s);' % page)
+                try:
+                    if "검색된 상품이 없습니다." in (driver.find_element_by_css_selector("#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(3) > ul > li > p").text) :
+                        if switch is 0:
+                            print("2+1으로 이동")
+                            driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[2]/span').click()
+                            switch += 1
+                            page = 1
+                        elif switch is 1:
+                            print("덤증정으로 이동")
+                            driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[3]/span').click()
+                            switch += 1
+                            page = 1
+                        elif switch is 2:
+                            break
+                except NoSuchElementException:
+                    pass
         except StaleElementReferenceException:
             time.sleep(2)
     print(prod_list)
     return prod_list
 
 
+def ministop_parser():
+    # Connect to page
+    driver.get('https://www.ministop.co.kr/MiniStopHomePage/page/event/plus1.do')
+
+    # 전부 불러오기! [1+1]
+    num = 1
+    while 1:
+        try:
+            print(str(num) + "번째 상품 (ministop) ->", end="")
+            # 상품의 이름 및 가격 (line1: name, line2: price)
+            num += 1
+            driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > div > a.pr_more').click()
+            time.sleep(0.5)
+        except NoSuchElementException:
+            print("출력 끝...")
+            break
+
+    # 전부 불러오기! [2+1]
+    driver.get('https://www.ministop.co.kr/MiniStopHomePage/page/event/plus2.do')
+    num = 1
+    while 1:
+        try:
+            print(str(num) + "번째 상품 ->", end="")
+            # 상품의 이름 및 가격 (line1: name, line2: price)
+            print(driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a > p' % num).text)
+            print(driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a' % num).find_element_by_tag_name(
+                'img').get_attribute('src'))
+            num += 1
+            driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > div > a.pr_more').click()
+            time.sleep(0.5)
+        except NoSuchElementException:
+            print("출력 끝...")
+            break
+
+    # 전부 불러오기! [N+1]
+    driver.get('https://www.ministop.co.kr/MiniStopHomePage/page/event/plus4.do')
+    num = 1
+    while 1:
+        try:
+            print(str(num) + "번째 상품 ->", end="")
+            # 상품의 이름 및 가격 (line1: name, line2: price)
+            print(driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a > p' % num).text)
+            print(driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a' % num).find_element_by_tag_name(
+                'img').get_attribute('src'))
+            num += 1
+            driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > div > a.pr_more').click()
+            time.sleep(0.5)
+        except NoSuchElementException:
+            print("출력 끝...")
+            break
+
+
 if __name__ == '__main__':
-    parsed_data = cu_parser()
-    for data in parsed_data:
-        Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="CU").save()
+    # parsed_data = cu_parser()
+    # for data in parsed_data:
+    #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="CU").save()
     # parsed_data = emart_parser()
     # for data in parsed_data:
     #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="Emart24").save()
-    # parsed_data = gs25_parser()
-    # for data in parsed_data:
-    #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="GS25").save()
+    parsed_data = gs25_parser()
+    for data in parsed_data:
+        Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="GS25").save()
