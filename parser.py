@@ -58,7 +58,9 @@ def cu_parser():
             prod_input.append(driver.find_element_by_css_selector(
                 '#contents > div.relCon > div.prodListWrap > ul:nth-child(%s) > li:nth-child(%s) > div > a' % (
                     num, col)).find_element_by_tag_name('img').get_attribute('src'))
-            prod_input.append(driver.find_element_by_css_selector("#contents > div.relCon > div.prodListWrap > ul > li:nth-child(1) > ul > li").text)
+            prod_input.append(driver.find_element_by_css_selector(
+                "#contents > div.relCon > div.prodListWrap > ul:nth-child(%s) > li:nth-child(%s) > ul > li" % (
+                    num, col)).text)
             col += 1
             if col is 40:
                 col = 1
@@ -134,12 +136,12 @@ def emart_parser():
 
 def gs25_parser():
     # GS25 페이지에 driver를 접속시킨다.
-    driver.get('http://gs25.gsretail.com/gscvs/ko/products/event-goods')
     num = 1
     col = 0
     switch = 0
     prod_list = []
-    while 1:
+    while col<3:
+        driver.get('http://gs25.gsretail.com/gscvs/ko/products/event-goods')
         try:
             prod_input = []
             print((num + (col * 8), "번째 상품 파싱 [gs25]"))
@@ -166,6 +168,7 @@ def gs25_parser():
             prod_list.append(prod_input)
             num += 1
             if num is 8:
+                print("next")
                 col += 1
                 num = 1
                 driver.execute_script('goodsPageController.moveControl(1);')
@@ -177,7 +180,9 @@ def gs25_parser():
             elif switch is 1:
                 print("덤증정으로 이동")
                 driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[3]/span').click()
-            break
+                switch += 1
+            elif switch is 2:
+                break
         except StaleElementReferenceException:
             time.sleep(2)
     print(prod_list)
