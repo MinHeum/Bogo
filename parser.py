@@ -11,6 +11,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Bogo.settings')
 import django
 django.setup()
 from parsed_data.models import Product
+from parsed_data.models import Product2
+from parsed_data.models import Product3
+from parsed_data.models import Product4
+from parsed_data.models import Product5
 import platform
 
 # Chrome 창을 띄우지 않고(headless 하게) driver 를 사용하기 위한 options 변수 선언 및 설정 그리고 driver 선언
@@ -136,66 +140,53 @@ def emart_parser():
             break
         except StaleElementReferenceException:
             time.sleep(0.5)
+        except ElementClickInterceptedException:
+            time.sleep(1)
     return prod_list
+
 
 def gs25_parser():
     # GS25 페이지에 driver를 접속시킨다.
     driver.get('http://gs25.gsretail.com/gscvs/ko/products/event-goods')
+    driver.find_element_by_xpath('//*[@id="TOTAL"]').click()
     num = 1
-    col = 0
-    switch = 0
     page = 1
     prod_list = []
     while 1:
+        prod_input = []
         try:
-            prod_input = []
-            print((num + (col * 8), "번째 상품 파싱 [gs25]"))
-            prod_input.append(driver.find_element_by_css_selector(
-                '#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(3) > ul > li:nth-child(%s) > div > p.tit' % num).text)
-            prod_input.append(driver.find_element_by_css_selector(
-                '#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(3) > ul > li:nth-child(%s) > div > p.price' % num).text)
+            prod_input.append(driver.find_element_by_css_selector('#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(9) > ul > li:nth-child(%s) > div > p.tit' % num).text) #prod Name
+            prod_input.append(driver.find_element_by_css_selector('#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(9) > ul > li:nth-child(%s) > div > p.price > span' % num).text) # price
             try:
-                prod_input.append(driver.find_element_by_css_selector(
-                    '#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(3) > ul > li:nth-child(%s) > div > p.img' % num).find_element_by_tag_name(
-                    'img').get_attribute('src'))
+                prod_input.append(driver.find_element_by_css_selector('#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(9) > ul > li:nth-child(%s) > div > p.img > img' % num).get_attribute('src'))
             except NoSuchElementException:
                 pass
-
-            prod_input[1] = prod_input[1].replace(',', '')
-            prod_input[1] = prod_input[1].replace('원', '')
-
-            if switch is 0:
-                prod_input.append("1+1")
-            elif switch is 1:
-                prod_input.append("2+1")
-            else:
-                prod_input.append("dum")
+            prod_input.append(driver.find_element_by_css_selector('#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(9) > ul > li:nth-child(%s) > div > div > p > span' % num).text)
+            prod_input[1] = prod_input[1].replace(',','')
+            prod_input[1] = prod_input[1].replace('원','')
             prod_list.append(prod_input)
+            print(prod_input)
+            print(num)
+            print(page)
             num += 1
-            if num is 8:
-                print("next")
-                col += 1
-                num = 1
+            if num == 9:
                 page += 1
-                driver.execute_script('goodsPageController.movePage(%s);' % page)
+                num = 1
+                driver.execute_script("goodsPageController.movePage(%d);" % page)
                 try:
-                    if "검색된 상품이 없습니다." in (driver.find_element_by_css_selector("#contents > div.cnt > div.cnt_section.mt50 > div > div > div:nth-child(3) > ul > li > p").text) :
-                        if switch is 0:
-                            print("2+1으로 이동")
-                            driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[2]/span').click()
-                            switch += 1
-                            page = 1
-                        elif switch is 1:
-                            print("덤증정으로 이동")
-                            driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/ul/li[3]/span').click()
-                            switch += 1
-                            page = 1
-                        elif switch is 2:
-                            break
+                    if '검색된 상품이 없습니다.' in (driver.find_element_by_xpath('//*[@id="contents"]/div[2]/div[3]/div/div/div[4]/ul/li/p').text) :
+                        print("Parse END")
+                        break
                 except NoSuchElementException:
-                    pass
+                    print("TTTT")
+                    continue
+        except NoSuchElementException:
+            print("Parse END")
+            print("NoSuchElements")
+            break
         except StaleElementReferenceException:
-            time.sleep(2)
+            print("Stale")
+            time.sleep(1)
     print(prod_list)
     return prod_list
 
@@ -262,10 +253,10 @@ def ministop_parser():
 if __name__ == '__main__':
     # parsed_data = cu_parser()
     # for data in parsed_data:
-    #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="CU").save()
+    #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
     # parsed_data = emart_parser()
     # for data in parsed_data:
-    #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="Emart24").save()
+    #     Product2(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
     parsed_data = gs25_parser()
     for data in parsed_data:
-        Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="GS25").save()
+        Product3(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
