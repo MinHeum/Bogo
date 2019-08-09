@@ -17,7 +17,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("--disable-gpu")
-driver = webdriver.Chrome('/Users/quatre/PycharmProjects/Bogo_hackathon/chromedriver', options=options)
+driver = webdriver.Chrome('C:/Users/PHC/Desktop/Hack/Bogo/chromedriver.exe', options=options)
 driver.implicitly_wait(3)
 
 # CU Parser
