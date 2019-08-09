@@ -23,10 +23,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("--disable-gpu")
-if "Darwin" in platform.system():
-    driver = webdriver.Chrome('./chromedriver', options=options)
-else:
-    driver = webdriver.Chrome('./chromedriver.exe',options=options)
+driver = webdriver.Chrome('./chromedriver', options=options)
 driver.implicitly_wait(3)
 
 # CU Parser
