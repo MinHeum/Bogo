@@ -2,7 +2,7 @@ from selenium import webdriver
 import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
-driver = webdriver.Chrome('C:/tempfileforprojects/chromedriver.exe')
+driver = webdriver.Chrome('/Users/quatre/PycharmProjects/Bogo_hackathon/chromedriver')
 driver.implicitly_wait(3)
 
 # TODO: 불러오기가 끝났으니 제품명을 싸그리 크롤링해보자.
@@ -34,7 +34,7 @@ while 1:
         except NoSuchElementException:
             pass
         num += 1
-        if num is 9:
+        if num is 8:
             col += 1
             num = 1
             driver.execute_script('goodsPageController.moveControl(1);')

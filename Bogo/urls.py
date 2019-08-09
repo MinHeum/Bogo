@@ -19,12 +19,11 @@ import parsed_data.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',parsed_data.views.home, name='home'),
-    path('login/',parsed_data.views.login, name='login'),
-    path('add/',parsed_data.views.addGoods, name = 'addGoods'),
-    path('post/',parsed_data.views.post, name = 'post'),
-    path('post/<int:post_id>',parsed_data.views.detail, name = 'post_detail'),
-    path('post/new',parsed_data.views.new, name = 'post_new'),
-    path('post/create',parsed_data.views.create, name='post_create'),
-    path('accounts/',include('allauth.urls')),
+    path('', parsed_data.views.intro, name="intro"),
+    path('parsed_data/home/', parsed_data.views.home, name="home"),
+    path('parsed_data/gs25/', parsed_data.views.gs25, name="gs25"),
+    path('parsed_data/seven/', parsed_data.views.seven, name="seven"),
+    path('parsed_data/emart/', parsed_data.views.emart, name="emart"),
+    path('parsed_data/cu/', parsed_data.views.cu, name="cu"),
+    path('parsed_data/ministop/', parsed_data.views.ministop, name="ministop"),
 ]

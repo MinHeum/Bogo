@@ -15,7 +15,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("--disable-gpu")
-driver = webdriver.Chrome('chromedriver.exe', options=options)
+driver = webdriver.Chrome('/Users/quatre/PycharmProjects/Bogo_hackathon/chromedriver', options=options)
 driver.implicitly_wait(3)
 
 # TODO: 불러오기가 끝났으니 제품명을 싸그리 크롤링해보자.
@@ -29,14 +29,13 @@ driver.implicitly_wait(3)
 # TODO: 크롤링 기능을 함수로서 정의해보자!!!!!
 # TODO: Parser 를 합칠것이다.
 
-# CU Parser
-
-# CU 페이지에 driver를 접속시킵니다.
-driver.get('http://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N')
 
 
 def cu_parser():
-    # 전체 페이지 LOAD 하기
+    # CU Parser
+    # CU 페이지에 driver를 접속시킵니다.
+    driver.get('http://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N')
+    # 전체 페이지 LOAD 하기 (Test단계에서는 첫 번째 페이지만 로드)
     # while 1:
     #     try:
     #         driver.find_element_by_css_selector(
@@ -60,7 +59,7 @@ def cu_parser():
     while 1:
         prod_input = []
         try:
-            print(str(int(num / 17) * 40 + col - 40) + "번째 상품")
+            print(str(int(num / 17) * 40 + col - 40) + "번째 상품 파싱")
             # 상품의 이름 및 가격 (line1: name, line2: price)
             prod_input.append(driver.find_element_by_css_selector(
                 '#contents > div.relCon > div.prodListWrap > ul:nth-child(%s) > li:nth-child(%s) > p.prodName' % (
@@ -71,7 +70,8 @@ def cu_parser():
             prod_input.append(driver.find_element_by_css_selector(
                 '#contents > div.relCon > div.prodListWrap > ul:nth-child(%s) > li:nth-child(%s) > div > a' % (
                     num, col)).find_element_by_tag_name('img').get_attribute('src'))
-            prod_input.append(driver.find_element_by_css_selector("#contents > div.relCon > div.prodListWrap > ul > li:nth-child(1) > ul > li").text)
+            prod_input.append(driver.find_element_by_css_selector(
+                "#contents > div.relCon > div.prodListWrap > ul > li:nth-child(1) > ul > li").text)
             col += 1
             if col is 40:
                 col = 1
@@ -89,4 +89,4 @@ def cu_parser():
 if __name__ == '__main__':
     parsed_data = cu_parser()
     for data in parsed_data:
-        Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
+        Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3], prodCVS="CU").save()

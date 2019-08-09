@@ -6,10 +6,10 @@ class Product(models.Model):
     prodId = models.AutoField(primary_key=True)
     prodName = models.CharField(max_length=255, unique=True, null=False)
     prodType = models.CharField(max_length=20)
-    prodEventType = models.CharField(max_length=20)
+    prodEventType = models.CharField(max_length=20, default="DEFAULT")
     prodPrice = models.PositiveIntegerField(null=False)
     prodPriceEach = models.PositiveIntegerField
-    # prodCVS = models.CharField(max_length=40, null=False)
+    prodCVS = models.CharField(max_length=40, null=False, default="DEFAULT")
     prodImg = models.URLField(null=True)
 
     class Meta:

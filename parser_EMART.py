@@ -2,7 +2,7 @@ from selenium import webdriver
 import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
-driver = webdriver.Chrome('C:/tempfileforprojects/chromedriver.exe')
+driver = webdriver.Chrome('/Users/quatre/PycharmProjects/Bogo_hackathon/chromedriver')
 driver.implicitly_wait(3)
 
 # TODO: 불러오기가 끝났으니 제품명을 싸그리 크롤링해보자.
@@ -27,7 +27,7 @@ num = 1
 col = 0
 while 1:
     try:
-        print(num+(col*15), "번째 상품 ->")
+        print(num+(col*15), "번째 상품 파싱")
         # 상품의 이름 및 가격 (line1: name, line2: price, line3: img)
         print(driver.find_element_by_css_selector('#regForm > div.section > div.eventProduct > div.tabContArea > ul > li:nth-child(%s) > div > p.productDiv' % num).text)
         print(driver.find_element_by_css_selector('#regForm > div.section > div.eventProduct > div.tabContArea > ul > li:nth-child(%s) > div > p.price' % num).text)
@@ -35,11 +35,26 @@ while 1:
             print(driver.find_element_by_css_selector('#regForm > div.section > div.eventProduct > div.tabContArea > ul > li:nth-child(%s) > div > p.productImg' % num).find_element_by_tag_name('img').get_attribute('src'))
         except NoSuchElementException:
             pass
+        eventtype = driver.find_element_by_xpath('//*[@id="regForm"]/div[2]/div[3]/div[2]/ul/li[8]/div/div/p/img').get_attribute('alt')
+        print(eventtype)
+        if '2 + 1 뱃지'in eventtype:
+            eventtype = '2+1'
+        elif 'SALE 뱃지'in eventtype:
+            eventtype = 'sale'
+        elif 'X2 더블 뱃지'in eventtype:
+            eventtype = 'dum'
+        elif '1 + 1 뱃지 이미지'in eventtype:
+            eventtype = '1+1'
+        elif '3 + 1 뱃지'in eventtype:
+            eventtype = '3+1'
+        else:
+            eventtype = 'error!'
+        print(eventtype)
         num += 1
         if num is 16:
             col += 1
             num = 1
-            driver.find_element_by_css_selector('#regForm > div.section > div.eventProduct > div.paging > a.next.bgNone').click()
+            driver.find_element_by_css_selector('#regForm > div.section > div.eventProduct > div.paging > a.next.bgNone > alt').click()
     except NoSuchElementException:
         print("은 없다 ㅎ")
         break
