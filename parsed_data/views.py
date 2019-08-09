@@ -37,6 +37,10 @@ def create(request):
 
 from django.shortcuts import render
 from .models import Product
+from .models import Product2
+from .models import Product3
+from .models import Product4
+from .models import Product5
 from django.core.paginator import Paginator
 from django.utils import timezone
 
@@ -50,9 +54,9 @@ def home(request):
 
 
 def gs25(request):
-    items = Product.objects
-    item_list = Product.objects.all()
-    paginator = Paginator(item_list, 12)
+    items = Product5.objects
+    item_list = Product5.objects.all()
+    paginator = Paginator(item_list, 6)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 
@@ -60,9 +64,9 @@ def gs25(request):
 
 
 def seven(request):
-    items = Product.objects
-    item_list = Product.objects.all()
-    paginator = Paginator(item_list, 12)
+    items = Product4.objects
+    item_list = Product4.objects.all()
+    paginator = Paginator(item_list, 6)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 
@@ -70,9 +74,9 @@ def seven(request):
 
 
 def emart(request):
-    items = Product.objects
-    item_list = Product.objects.all()
-    paginator = Paginator(item_list, 12)
+    items = Product2.objects
+    item_list = Product2.objects.all()
+    paginator = Paginator(item_list, 6)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 
@@ -80,9 +84,9 @@ def emart(request):
 
 
 def ministop(request):
-    items = Product.objects
-    item_list = Product.objects.all()
-    paginator = Paginator(item_list, 12)
+    items = Product3.objects
+    item_list = Product3.objects.all()
+    paginator = Paginator(item_list, 6)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 
@@ -92,7 +96,7 @@ def ministop(request):
 def cu(request):
     items = Product.objects
     item_list = Product.objects.all()
-    paginator = Paginator(item_list, 12)
+    paginator = Paginator(item_list,6)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 

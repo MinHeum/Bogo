@@ -6,6 +6,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import ElementNotInteractableException
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Bogo.settings')
 import django
@@ -195,68 +196,134 @@ def ministop_parser():
     # Connect to page
     driver.get('https://www.ministop.co.kr/MiniStopHomePage/page/event/plus1.do')
 
+    prod_list = []
     # 전부 불러오기! [1+1]
     num = 1
     while 1:
         try:
-            print(str(num) + "번째 상품 (ministop) ->", end="")
-            # 상품의 이름 및 가격 (line1: name, line2: price)
-            num += 1
             driver.find_element_by_css_selector(
                 '#section > div.inner.wrap.service1 > div.event_plus_list > div > a.pr_more').click()
-            time.sleep(0.5)
+            time.sleep(0.3)
         except NoSuchElementException:
             print("출력 끝...")
             break
-
+    while 1:
+        try:
+            prod_input = []
+            prod_input.append(driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%) > a > p').text)
+            prod_input = prod_input[0].split('\n')
+            try:
+                prod_input.append(driver.find_element_by_css_selector(driver.find_element_by_css_selector(
+                    '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a' % num).find_element_by_tag_name(
+                    'img').get_attribute('src')))
+            except NoSuchElementException:
+                pass
+            prod_input.append("1+1")
+            prod_list.append(prod_input)
+            num += 1
+        except NoSuchElementException:
+            break
     # 전부 불러오기! [2+1]
     driver.get('https://www.ministop.co.kr/MiniStopHomePage/page/event/plus2.do')
     num = 1
     while 1:
         try:
-            print(str(num) + "번째 상품 ->", end="")
-            # 상품의 이름 및 가격 (line1: name, line2: price)
-            print(driver.find_element_by_css_selector(
-                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a > p' % num).text)
-            print(driver.find_element_by_css_selector(
-                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a' % num).find_element_by_tag_name(
-                'img').get_attribute('src'))
-            num += 1
             driver.find_element_by_css_selector(
                 '#section > div.inner.wrap.service1 > div.event_plus_list > div > a.pr_more').click()
-            time.sleep(0.5)
+            time.sleep(0.3)
         except NoSuchElementException:
             print("출력 끝...")
             break
-
-    # 전부 불러오기! [N+1]
-    driver.get('https://www.ministop.co.kr/MiniStopHomePage/page/event/plus4.do')
-    num = 1
     while 1:
         try:
-            print(str(num) + "번째 상품 ->", end="")
-            # 상품의 이름 및 가격 (line1: name, line2: price)
-            print(driver.find_element_by_css_selector(
-                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a > p' % num).text)
-            print(driver.find_element_by_css_selector(
-                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a' % num).find_element_by_tag_name(
-                'img').get_attribute('src'))
+            prod_input = []
+            prod_input.append(driver.find_element_by_css_selector(
+                '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%) > a > p').text)
+            prod_input = prod_input[0].split('\n')
+            try:
+                prod_input.append(driver.find_element_by_css_selector(driver.find_element_by_css_selector(
+                    '#section > div.inner.wrap.service1 > div.event_plus_list > ul > li:nth-child(%s) > a' % num).find_element_by_tag_name(
+                    'img').get_attribute('src')))
+            except NoSuchElementException:
+                pass
+            prod_input.append("2+1")
+            prod_list.append(prod_input)
             num += 1
-            driver.find_element_by_css_selector(
-                '#section > div.inner.wrap.service1 > div.event_plus_list > div > a.pr_more').click()
-            time.sleep(0.5)
         except NoSuchElementException:
-            print("출력 끝...")
+            break
+    return prod_list
+
+def seveneleven_parser():
+    # Connect to page
+    driver.get('http://www.7-eleven.co.kr/product/presentList.asp')
+    prod_list = []
+    # 전부 불러오기!
+    while 1:
+        try:
+            driver.find_element_by_css_selector('#listUl > li.btn_more > a').click()
+            time.sleep(0.3)
+        except ElementNotInteractableException:
+            print("More Ended...")
             break
 
+    num = 2
+    while 1:
+        prod_input = []
+        try:
+            print(str(num-1)+"번째 상품 ->", end="")
+            # 상품의 이름 및 가격 (line1: name, line2: price)
+            prod_input.append(driver.find_element_by_xpath('//*[@id="listUl"]/li[%s]/div' % num).text)
+            prod_input.append(driver.find_element_by_xpath('//*[@id="listUl"]/li[%s]/div/div/div[2]' % num).text)
+            prod_input.append(driver.find_element_by_xpath('//*[@id="listUl"]/li[%s]/div' % num).find_element_by_tag_name('img').get_attribute('src'))
+            prod_list.append(prod_input)
+            num += 1
+        except NoSuchElementException:
+            print("parsing done")
+            break
+
+    # 2+1 상품으로 넘어가기
+    driver.find_element_by_xpath('//*[@id="actFrm"]/div[3]/div[1]/ul/li[2]/a').click()
+
+    # 전부 불러오기!
+    while 1:
+        try:
+            driver.find_element_by_css_selector('#listUl > li.btn_more > a').click()
+            time.sleep(0.3)
+        except NoSuchElementException:
+            print("More Ended...")
+            break
+
+    num = 2
+    while 1:
+        try:
+            print(str(num - 1) + "번째 상품 ->", end="")
+            # 상품의 이름 및 가격 (line1: name, line2: price)
+            prod_input.append(driver.find_element_by_xpath('//*[@id="listUl"]/li[%s]/div' % num).text)
+            prod_input.append(driver.find_element_by_xpath('//*[@id="listUl"]/li[%s]/div/div/div[2]' % num).text)
+            prod_input.append(
+                driver.find_element_by_xpath('//*[@id="listUl"]/li[%s]/div' % num).find_element_by_tag_name(
+                    'img').get_attribute('src'))
+            prod_list.append(prod_input)
+            num += 1
+        except NoSuchElementException:
+            print("parsing done")
+            break
+    return prod_list
 
 if __name__ == '__main__':
-    # parsed_data = cu_parser()
-    # for data in parsed_data:
-    #     Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
-    # parsed_data = emart_parser()
-    # for data in parsed_data:
-    #     Product2(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
+    parsed_data = cu_parser()
+    for data in parsed_data:
+        Product(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
+    parsed_data = emart_parser()
+    for data in parsed_data:
+        Product2(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
     parsed_data = gs25_parser()
     for data in parsed_data:
         Product3(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
+    parsed_data = ministop_parser()
+    for data in parsed_data:
+        Product4(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()
+    parsed_data = seveneleven_parser()
+    for data in parsed_data:
+        Product5(prodName=data[0], prodPrice=data[1], prodImg=data[2], prodEventType=data[3]).save()

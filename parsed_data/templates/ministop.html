@@ -50,8 +50,58 @@
                           </form>
                         </div>
                       </nav>
-        
    
                     </div>
+                    <section class="container">
+                        <div id="blog">
+                            <div class="post">
+                                <div class="jumbotron jumbotron-fluid">
+                                    <div class="container">
+                                      
+                                      <h1 class="display-4">MINISTOP 편의점 행사 품목</h1>
+                                      <p class="lead">매월 새롭게 진행되는 다양한 행사상품으로 즐거움을 드립니다.</p>
+                                    </div>
+                                  </div>
+                                 
+                                        <section id="middle">
+                                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                          {% for item in posts %}
+                                          
+                                                                <div class="card" style="width: 300px; height: 460px; float: left;">
+                                                                    <img src="{{item.prodImg}}" class="card-img-top" alt="...">
+                                                                    <div class="card-body">
+                                                                      <p class="card-text">{{item.prodName}}</p>
+                                                                      <p class="card-text">{{item.prodEventType}}</p>
+                                                                      <p class="card-text">{{item.prodPrice}}</p>
+                                                                    </div>
+                                                                  </div>
+                                         
+                                      {% endfor %}
+                                                                   
+                                    </div>
+                                    
+                                     </section>
+                                  
+                                  <div>
+                                      <nav aria-label="Page navigation example">
+                                              <ul class="pagination">
+                                              {%if posts.has_previous%}
+                                                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                                                <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
+                                              {%endif%}
+                              
+                                              <li class="page-item"><a class="page-link" href="#">{{posts.number}}</a></li>
+                              
+                                              {%if posts.has_next%}
+                                                <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
+                                                <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last</a></li>
+                                              {%endif%}
+                                              </ul>
+                                            </nav>
+                                          </div>
+                                    
+                              </div>
+                              </div>
+                      </section>
 </body>
 </html>

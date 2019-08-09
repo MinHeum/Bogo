@@ -58,75 +58,49 @@
                           <div class="post">
                               <div class="jumbotron jumbotron-fluid">
                                   <div class="container">
+                                    
                                     <h1 class="display-4">CU 편의점 행사 품목</h1>
                                     <p class="lead">매월 새롭게 진행되는 다양한 행사상품으로 즐거움을 드립니다.</p>
                                   </div>
                                 </div>
-                                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                    <li class="nav-item">
-                                      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">1+1</a>
-                                    </li>
-                                    <li class="nav-item">
-                                      <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">2+1</a>
-                                    </li>
-                                    <li class="nav-item">
-                                      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">증정</a>
-                                    </li>
-                                  <li class="nav-item">
-                                      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">할인</a>
-                                    </li>
-                                  </ul>
-                                  <div class="tab-content" id="myTabContent">
+                               
+                                      <section id="middle">
                                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                    
-                                                                  <div class="card" style="width: 18rem;">
-                                                                      <img src="{{item.prodImg}}" class="card-img-top" alt="...">
-                                                                      <div class="card-body">
-                                                                        <p class="card-text">{{item.prodName}}</p>
-                                                                        <p class="card-text">{{item.prodEventType}}</p>
-                                                                        <p class="card-text">{{item.prodPriceEach}}</p>
-                                                                      </div>
-                                                                    </div>
+                                        {% for item in posts %}
+                                        
+                                                              <div class="card" style="width: 300px; height: 460px; float: left;">
+                                                                  <img src="{{item.prodImg}}" class="card-img-top" alt="...">
+                                                                  <div class="card-body">
+                                                                    <p class="card-text">{{item.prodName}}</p>
+                                                                    <p class="card-text">{{item.prodEventType}}</p>
+                                                                    <p class="card-text">{{item.prodPrice}}</p>
+                                                                  </div>
+                                                                </div>
+                                       
+                                    {% endfor %}
                                                                  
                                   </div>
-                                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                        {% for item in posts %}
-                                            {% if item.prodEventType == '1+1' %}
-                                                                  <div class="card" style="width: 300px; height: 500px; float: left;">
-                                                                      <img src="{{item.prodImg}}" class="card-img-top" alt="...">
-                                                                      <div class="card-body">
-                                                                        <p class="card-text">{{item.prodName}}</p>
-                                                                        <p class="card-text">{{item.prodEventType}}</p>
-                                                                        <p class="card-text">{{item.prodPrice}}</p>
-                                                                      </div>
-                                                                    </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                  </div>
-                                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                    
-                                                                  <div class="card" style="width: 18rem;">
-                                                                      <img src="{{item.prodImg}}" class="card-img-top" alt="...">
-                                                                      <div class="card-body">
-                                                                        <p class="card-text">{{item.prodName}}</p>
-                                                                        <p class="card-text">{{item.prodEventType}}</p>
-                                                                        <p class="card-text">{{item.prodPriceEach}}</p>
-                                                                      </div>
-                                                                    </div>
                                   
-                                  </div>
-                                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                   </section>
                                 
-                                                                  <div class="card" style="width: 18rem;">
-                                                                      <img src="{{item.prodImg}}" class="card-img-top" alt="...">
-                                                                      <div class="card-body">
-                                                                        <p class="card-text">{{item.prodName}}</p>
-                                                                        <p class="card-text">{{item.prodEventType}}</p>
-                                                                        <p class="card-text">{{item.prodPriceEach}}</p>
-                                                                      </div>
-                                                                    </div>
-                                  </div>
-                                  </div>
+                                <div>
+                                    <nav aria-label="Page navigation example">
+                                            <ul class="pagination">
+                                            {%if posts.has_previous%}
+                                              <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                                              <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
+                                            {%endif%}
+                            
+                                            <li class="page-item"><a class="page-link" href="#">{{posts.number}}</a></li>
+                            
+                                            {%if posts.has_next%}
+                                              <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
+                                              <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last</a></li>
+                                            {%endif%}
+                                            </ul>
+                                          </nav>
+                                        </div>
+                                  
                             </div>
                             </div>
                     </section>
